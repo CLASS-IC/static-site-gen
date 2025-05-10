@@ -11,11 +11,46 @@ class HtmlNode:
         raise NotImplementedError()
 
     def props_to_html(self):
-        for k, v in self.props.items():
-            return f' {k}="{v}"'
+            return ''.join(f' {k}="{v}"' for k, v in self.props.items())
 
     def __repr__(self):
         return f'HtmlNode({self.tag}, {self.value}, {self.children}, {self.props})'
 
     def __eq__(self, other):
         return self.tag == other.tag and self.value == other.value and self.children == other.children and self.props == other.props
+
+
+class LeafNode(HtmlNode):
+    def __init__(self, tag, value, props=None):
+        super().__init__(
+            tag=tag,
+            value=value,
+            children=[],
+            props=props if props is not None else {}
+        )
+
+    def to_html(self):
+        if self.value is None:
+            raise ValueError("All leaf nodes must have a value")
+        if self.tag is None:
+            return f'{self.value}'
+        if self.props:
+            props_string = self.props_to_html()
+            return f'<{self.tag}{props_string}>{self.value}</{self.tag}>'
+        return f'<{self.tag}>{self.value}</{self.tag}>'
+
+class ParentNode(HtmlNode):
+    def __init__(self, tag, children, props=None):
+        super().__init__(
+            tag=tag,
+            children=children,
+            props=props if props is not None else {}
+        )
+    def to_html(self):
+        if self.children is None:
+            raise ValueError("All parents must have a children")
+        if self.tag is None:
+            raise ValueError("All parents must have a tag")
+        props_string = self.props_to_html()
+        inner_html = ''.join(child.to_html() for child in self.children)
+        return f'<{self.tag}{props_string}>{inner_html}</{self.tag}>'
