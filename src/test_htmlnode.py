@@ -27,6 +27,10 @@ class TestHtmlNode(unittest.TestCase):
 
 # Start of LeafNode tests
 
+    def test_multi_prop(self):
+        node = LeafNode('p', 'value', {"id": "test", "href": "test"})
+        self.assertEqual(node.to_html(), '<p id="test" href="test">value</p>')
+
     def test_leaf_to_html_p(self):
         node = LeafNode("p", "Hello, world!")
         self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
