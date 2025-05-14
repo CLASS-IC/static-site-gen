@@ -1,5 +1,6 @@
 import unittest
 
+from helper_functions import *
 from htmlnode import *
 from textnode import *
 
