@@ -1,6 +1,7 @@
 import unittest
 
 from htmlnode import *
+from textnode import *
 
 class TestHtmlNode(unittest.TestCase):
 
@@ -54,3 +55,26 @@ class TestHtmlNode(unittest.TestCase):
             parent_node.to_html(),
             "<div><span><b>grandchild</b></span></div>",
         )
+
+    def test_text(self):
+        node = TextNode("This is a text node", TextType.TEXT)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.value, "This is a text node")
+
+    def test_split_nodes(self):
+        node = TextNode("This is text with a `code block` word", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+        print(new_nodes)
+    def test_split_nodes_italic(self):
+        node = TextNode("This is text with a _italic block_ word", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "_", TextType.ITALIC)
+        print(new_nodes)
+    def test_split_multi_nodes_italic(self):
+        nodes = []
+        node = TextNode("This is text with a _italic block_ word", TextType.TEXT)
+        nodes.append(node)
+        n2 = TextNode("This is text with another  _not bold block_ word", TextType.TEXT)
+        nodes.append(n2)
+        new_nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
+        print(new_nodes)
